@@ -1,40 +1,40 @@
 # Score Ring Generator (Figma plugin)
 
-Maakt in één klik een volledige set score-cirkels: één hoofdcomponent plus een grid met een variant per waarde, per taal, klaar om te exporteren. Kleurgroepen, teksten en fonts kan je achteraf nog aanpassen.
+Creates a complete set of score rings in one click: one main component plus a grid with one variant per value, per language, ready to export. You can still adjust color groups, texts and fonts afterwards.
 
-## Installeren (eenmalig)
+## Installation (one time)
 
-1. Download deze repository (groene knop **Code** > **Download ZIP**) en pak hem uit.
-2. Zet de uitgepakte map op een vaste plek, bv. `Documenten/Figma plugins/`. Niet meer verplaatsen achteraf.
-3. Open de Figma desktop-app (eigen plugins werken niet in de browser).
-4. Ga naar **Plugins > Development > Import plugin from manifest...** en kies `manifest.json` in die map.
+1. Download this repository (green **Code** button > **Download ZIP**) and unzip it.
+2. Put the unzipped folder in a fixed location, e.g. `Documents/Figma plugins/`. Do not move it afterwards.
+3. Open the Figma desktop app (local plugins do not work in the browser).
+4. Go to **Plugins > Development > Import plugin from manifest...** and choose `manifest.json` in that folder.
 
-## Een nieuwe set maken
+## Creating a new set
 
-1. Open een Figma-bestand en ga naar de pagina waar de set moet komen.
-2. Start **Plugins > Development > Score Ring Generator**.
-3. Vul in:
-   - **Set**: naam, van welke tot welke waarde, en de schaal (bij 0 tot 100 is 35 een cirkel voor 35% gevuld).
-   - **Languages and texts**: per taal een code (bv. `nl`, `en`), titel en optionele subtitel.
-   - **Color groups**: per groep een naam, "tot en met"-waarde, kleur en dotkleur (licht, donker of geen dot). De laatste groep loopt automatisch tot de hoogste waarde.
-   - **Style**: diameter, dikte, kleuren, afgeronde uiteinden.
-   - **Fonts**: kies uit de fonts op jouw computer.
-   - **Export**: PNG, SVG of JPG en de schaal.
-4. Klik op **Generate new set**.
+1. Open a Figma file and go to the page where the set should go.
+2. Run **Plugins > Development > Score Ring Generator**.
+3. Fill in:
+   - **Set**: name, the value range, and the scale (for 0 to 100, a value of 35 gives a ring that is 35% filled).
+   - **Languages and texts**: a code per language (e.g. `nl`, `en`), a title and an optional subtitle.
+   - **Color groups**: per group a name, an "up to and including" value, a color and a dot color (light, dark or no dot). The last group automatically runs up to the highest value.
+   - **Style**: diameter, thickness, colors, rounded ends.
+   - **Fonts**: choose from the fonts installed on your computer.
+   - **Export**: PNG, SVG or JPG and the scale.
+4. Click **Generate new set**.
 
-Je krijgt een sectie met het hoofdcomponent, een legende en per taal een grid. Elke variant heet bv. `quality-score-nl-035` en heeft al een exportinstelling: selecteer een grid en klik op **Export**.
+You get a section with the main component, a legend and a grid per language. Each variant is named e.g. `quality-score-nl-035` and already has an export setting: select a grid and click **Export**.
 
-## Een bestaande set aanpassen
+## Editing an existing set
 
-1. Selecteer de sectie van de set (of iets erin).
-2. Start de plugin: hij laadt de instellingen van die set.
-3. Pas kleurgroepen, kleuren, teksten, fonts of export aan en klik op **Update selected set**.
+1. Select the section of the set (or anything inside it).
+2. Run the plugin: it loads the settings of that set.
+3. Change color groups, colors, texts, fonts or export settings and click **Update selected set**.
 
-Bereik, schaal, grootte, dikte, naam en talen kan je niet bijwerken. Maak daarvoor een nieuwe set.
+Range, scale, size, thickness, name and languages cannot be updated. Create a new set for that.
 
-## Goed om te weten
+## Good to know
 
-- Kleuren staan in de variabelen `<naam> colors`, teksten in `<naam> texts` (met een mode per taal).
-- Laat je Figma-abonnement te weinig variabele-modes toe, dan zet de plugin de teksten rechtstreeks op de varianten. Aanpassen kan dan nog altijd via **Update selected set**.
-- Hernoem de varianten en het hoofdcomponent niet; de plugin zoekt ze op naam.
-- Ongedaan maken kan met Cmd/Ctrl + Z.
+- Colors are stored in the variables `<name> colors`, texts in `<name> texts` (with one mode per language).
+- If your Figma plan allows too few variable modes, the plugin puts the texts directly on the variants. You can still edit them via **Update selected set**.
+- Do not rename the variants or the main component; the plugin finds them by name.
+- Undo works with Cmd/Ctrl + Z.

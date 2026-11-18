@@ -1,0 +1,309 @@
+<style>
+  :root { --bg: var(--figma-color-bg, #fff); --fg: var(--figma-color-text, #222); --muted: var(--figma-color-text-secondary, #777); --line: var(--figma-color-border, #ddd); --accent: #0000A4; }
+  * { box-sizing: border-box; }
+  body { font-family: Inter, system-ui, sans-serif; font-size: 12px; margin: 0; color: var(--fg); background: var(--bg); }
+  header { padding: 14px 16px 10px; border-bottom: 1px solid var(--line); }
+  header h1 { font-size: 14px; margin: 0; }
+  header p { margin: 4px 0 0; color: var(--muted); }
+  #banner { display: none; margin-top: 8px; padding: 6px 8px; border-radius: 4px; background: rgba(0,0,164,.1); }
+  main { padding: 4px 16px 16px; height: calc(100vh - 150px); overflow-y: auto; }
+  details { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  summary { font-weight: 600; cursor: pointer; }
+  .grid { display: grid; gap: 8px; margin-top: 10px; align-items: center; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr 1fr; }
+  label { display: flex; flex-direction: column; gap: 3px; color: var(--muted); font-size: 11px; }
+  label.inline { flex-direction: row; align-items: center; gap: 6px; color: var(--fg); font-size: 12px; }
+  input, select { width: 100%; padding: 5px 6px; border: 1px solid var(--line); border-radius: 4px; background: transparent; color: var(--fg); font: inherit; }
+  input[type=checkbox] { width: auto; }
+  input[type=color] { padding: 0; height: 26px; width: 30px; border: 1px solid var(--line); }
+  input:disabled { opacity: .5; }
+  .row { display: grid; gap: 6px; align-items: center; margin-top: 8px; }
+  .lang-row { grid-template-columns: 52px 1fr 1fr 22px; }
+  .group-row { grid-template-columns: 1fr 52px 30px 74px 92px 22px; }
+  .head { color: var(--muted); font-size: 10px; margin-top: 10px; }
+  .x { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0; }
+  .add { margin-top: 8px; border: 1px dashed var(--line); background: none; color: var(--fg); border-radius: 4px; padding: 5px; width: 100%; cursor: pointer; font: inherit; }
+  .colorpair { display: flex; gap: 4px; }
+  footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 16px; border-top: 1px solid var(--line); background: var(--bg); }
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  button.primary, button.secondary { padding: 9px; border-radius: 6px; font: inherit; font-weight: 600; cursor: pointer; }
+  button.primary { background: var(--accent); color: #fff; border: 0; }
+  button.secondary { background: none; color: var(--fg); border: 1px solid var(--line); }
+  button:disabled { opacity: .4; cursor: default; }
+  #msg { margin-top: 6px; min-height: 16px; font-size: 11px; }
+  .err { color: #D00A26; } .ok { color: #0a7a4a; }
+  .hint { color: var(--muted); font-size: 11px; margin-top: 6px; }
+</style>
+
+<header>
+  <h1>Score Ring Generator</h1>
+  <p>Create a full set of score rings, one per value, ready to export.</p>
+  <div id="banner"></div>
+</header>
+
+<main>
+  <details open>
+    <summary>Set</summary>
+    <div class="grid g2">
+      <label>Name<input id="name" value="Quality score"></label>
+      <label>Columns in grid<input id="columns" type="number" value="11" min="1"></label>
+    </div>
+    <div class="grid g2">
+      <label>Values from<input id="from" type="number" value="35"></label>
+      <label>Values to<input id="to" type="number" value="100"></label>
+    </div>
+    <div class="grid g2">
+      <label>Full circle: scale min<input id="scaleMin" type="number" value="0"></label>
+      <label>Full circle: scale max<input id="scaleMax" type="number" value="100"></label>
+    </div>
+    <div class="hint">The ring fills from scale min (empty) to scale max (full circle).</div>
+  </details>
+
+  <details open>
+    <summary>Languages and texts</summary>
+    <div class="row lang-row head"><span>Code</span><span>Title</span><span>Subtitle</span><span></span></div>
+    <div id="langs"></div>
+    <button class="add" id="addLang">+ Add language</button>
+  </details>
+
+  <details open>
+    <summary>Color groups</summary>
+    <div class="row group-row head"><span>Name</span><span>Up to</span><span></span><span>Hex</span><span>Dot</span><span></span></div>
+    <div id="groups"></div>
+    <button class="add" id="addGroup">+ Add group</button>
+    <div class="hint" id="rangesHint"></div>
+  </details>
+
+  <details>
+    <summary>Style</summary>
+    <div class="grid g2">
+      <label>Ring diameter (px)<input id="size" type="number" value="189"></label>
+      <label>Ring thickness (px)<input id="thickness" type="number" value="17"></label>
+    </div>
+    <div class="grid g2">
+      <label>Track color<span class="colorpair"><input type="color" id="trackColorP"><input id="trackColor" value="#FFFFFF"></span></label>
+      <label>Text color<span class="colorpair"><input type="color" id="textColorP"><input id="textColor" value="#0000A4"></span></label>
+    </div>
+    <div class="grid g2">
+      <label>Light dot color<span class="colorpair"><input type="color" id="dotLightP"><input id="dotLight" value="#FFFFFF"></span></label>
+      <label>Dark dot color<span class="colorpair"><input type="color" id="dotDarkP"><input id="dotDark" value="#0000A4"></span></label>
+    </div>
+    <div class="grid"><label class="inline"><input type="checkbox" id="rounded" checked> Rounded ends</label></div>
+  </details>
+
+  <details>
+    <summary>Fonts</summary>
+    <datalist id="families"></datalist>
+    <div class="grid g2">
+      <label>Number font<input id="fNumF" list="families" value="Inter"></label>
+      <label>Style<select id="fNumS"></select></label>
+      <label>Title font<input id="fTitF" list="families" value="Inter"></label>
+      <label>Style<select id="fTitS"></select></label>
+      <label>Subtitle font<input id="fSubF" list="families" value="Inter"></label>
+      <label>Style<select id="fSubS"></select></label>
+    </div>
+  </details>
+
+  <details>
+    <summary>Export</summary>
+    <div class="grid g2">
+      <label>Format<select id="exportFormat"><option>PNG</option><option>SVG</option><option>JPG</option></select></label>
+      <label>Scale<select id="exportScale"><option value="1">1x</option><option value="2" selected>2x</option><option value="3">3x</option><option value="4">4x</option></select></label>
+    </div>
+    <div class="hint">Layer names become file names, e.g. quality-score-en-035.png</div>
+  </details>
+</main>
+
+<footer>
+  <div class="btns">
+    <button class="primary" id="generate">Generate new set</button>
+    <button class="secondary" id="update" disabled>Update selected set</button>
+  </div>
+  <div id="msg"></div>
+</footer>
+
+<script>
+  var $ = function (id) { return document.getElementById(id); };
+  var FONTS = {};
+  var DEFAULT_STYLES = { fNum: "Black", fTit: "Bold", fSub: "Regular" };
+
+  function langRow(l) {
+    var d = document.createElement("div");
+    d.className = "row lang-row lang";
+    d.innerHTML = '<input class="code" placeholder="en"><input class="title" placeholder="Title"><input class="subtitle" placeholder="(optional)"><button class="x" title="Remove">&times;</button>';
+    d.querySelector(".code").value = l.code || "";
+    d.querySelector(".title").value = l.title || "";
+    d.querySelector(".subtitle").value = l.subtitle || "";
+    d.querySelector(".x").onclick = function () { d.remove(); };
+    $("langs").appendChild(d);
+  }
+
+  function groupRow(gr) {
+    var d = document.createElement("div");
+    d.className = "row group-row group";
+    d.innerHTML = '<input class="label" placeholder="Name"><input class="upTo" type="number"><input type="color" class="picker"><input class="hex"><select class="dot"><option value="light">Light dot</option><option value="dark">Dark dot</option><option value="none">No dot</option></select><button class="x" title="Remove">&times;</button>';
+    d.querySelector(".label").value = gr.label || "";
+    d.querySelector(".upTo").value = gr.upTo;
+    d.querySelector(".hex").value = gr.color || "#999999";
+    d.querySelector(".picker").value = normHex(gr.color || "#999999");
+    d.querySelector(".dot").value = gr.dot || "dark";
+    d.querySelector(".picker").oninput = function (e) { d.querySelector(".hex").value = e.target.value.toUpperCase(); };
+    d.querySelector(".hex").oninput = function (e) { var h = normHex(e.target.value); if (h) d.querySelector(".picker").value = h; };
+    d.querySelector(".upTo").oninput = refreshGroups;
+    d.querySelector(".x").onclick = function () { d.remove(); refreshGroups(); };
+    $("groups").appendChild(d);
+    refreshGroups();
+  }
+
+  function normHex(h) {
+    h = String(h || "").trim().replace("#", "");
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    return /^[0-9a-fA-F]{6}$/.test(h) ? "#" + h.toLowerCase() : null;
+  }
+
+  function refreshGroups() {
+    var rows = document.querySelectorAll(".group");
+    var to = parseInt($("to").value, 10);
+    var start = parseInt($("from").value, 10);
+    var parts = [];
+    rows.forEach(function (r, i) {
+      var up = r.querySelector(".upTo");
+      var last = i === rows.length - 1;
+      up.disabled = last;
+      if (last) up.value = to;
+      var end = parseInt(up.value, 10);
+      parts.push((r.querySelector(".label").value || "?") + " " + start + " to " + end);
+      start = end + 1;
+    });
+    $("rangesHint").textContent = parts.join("  |  ");
+  }
+
+  function bindColor(id) {
+    $(id + "P").value = normHex($(id).value) || "#000000";
+    $(id + "P").oninput = function (e) { $(id).value = e.target.value.toUpperCase(); };
+    $(id).oninput = function (e) { var h = normHex(e.target.value); if (h) $(id + "P").value = h; };
+  }
+
+  function fillStyles(prefix, wanted) {
+    var fam = $(prefix + "F").value;
+    var sel = $(prefix + "S");
+    var styles = FONTS[fam] || [];
+    sel.innerHTML = "";
+    styles.forEach(function (s) { var o = document.createElement("option"); o.textContent = s; sel.appendChild(o); });
+    if (wanted && styles.indexOf(wanted) >= 0) sel.value = wanted;
+  }
+
+  function collect() {
+    var langs = [];
+    document.querySelectorAll(".lang").forEach(function (r) {
+      langs.push({ code: r.querySelector(".code").value.trim(), title: r.querySelector(".title").value, subtitle: r.querySelector(".subtitle").value });
+    });
+    var groups = [];
+    document.querySelectorAll(".group").forEach(function (r) {
+      groups.push({ label: r.querySelector(".label").value.trim(), upTo: parseInt(r.querySelector(".upTo").value, 10), color: r.querySelector(".hex").value.trim(), dot: r.querySelector(".dot").value });
+    });
+    langs.forEach(function (l) { if (!l.code) throw new Error("Every language needs a code (e.g. en, nl)."); });
+    return {
+      name: $("name").value.trim(),
+      from: parseInt($("from").value, 10),
+      to: parseInt($("to").value, 10),
+      scaleMin: parseFloat($("scaleMin").value),
+      scaleMax: parseFloat($("scaleMax").value),
+      columns: Math.max(1, parseInt($("columns").value, 10) || 10),
+      langs: langs,
+      groups: groups,
+      size: parseFloat($("size").value),
+      thickness: parseFloat($("thickness").value),
+      rounded: $("rounded").checked,
+      trackColor: $("trackColor").value.trim(),
+      textColor: $("textColor").value.trim(),
+      dotLight: $("dotLight").value.trim(),
+      dotDark: $("dotDark").value.trim(),
+      fonts: {
+        number: { family: $("fNumF").value.trim(), style: $("fNumS").value },
+        title: { family: $("fTitF").value.trim(), style: $("fTitS").value },
+        subtitle: { family: $("fSubF").value.trim(), style: $("fSubS").value }
+      },
+      exportFormat: $("exportFormat").value,
+      exportScale: parseInt($("exportScale").value, 10)
+    };
+  }
+
+  function load(cfg) {
+    $("name").value = cfg.name; $("from").value = cfg.from; $("to").value = cfg.to;
+    $("scaleMin").value = cfg.scaleMin; $("scaleMax").value = cfg.scaleMax; $("columns").value = cfg.columns;
+    $("langs").innerHTML = ""; cfg.langs.forEach(langRow);
+    $("groups").innerHTML = ""; cfg.groups.forEach(groupRow);
+    $("size").value = cfg.size; $("thickness").value = cfg.thickness; $("rounded").checked = cfg.rounded;
+    ["trackColor", "textColor", "dotLight", "dotDark"].forEach(function (k) { $(k).value = cfg[k]; bindColor(k); });
+    $("fNumF").value = cfg.fonts.number.family; fillStyles("fNum", cfg.fonts.number.style);
+    $("fTitF").value = cfg.fonts.title.family; fillStyles("fTit", cfg.fonts.title.style);
+    $("fSubF").value = cfg.fonts.subtitle.family; fillStyles("fSub", cfg.fonts.subtitle.style);
+    $("exportFormat").value = cfg.exportFormat; $("exportScale").value = String(cfg.exportScale);
+    refreshGroups();
+  }
+
+  function msg(text, cls) { $("msg").innerHTML = '<span class="' + (cls || "") + '">' + text + "</span>"; }
+
+  // defaults
+  [{ code: "en", title: "Quality score", subtitle: "" }].forEach(langRow);
+  [
+    { label: "Red", upTo: 49, color: "#D00A26", dot: "light" },
+    { label: "Orange", upTo: 69, color: "#FF9900", dot: "dark" },
+    { label: "Green", upTo: 84, color: "#81D2A8", dot: "dark" },
+    { label: "Dark green", upTo: 100, color: "#00704A", dot: "light" }
+  ].forEach(groupRow);
+  ["trackColor", "textColor", "dotLight", "dotDark"].forEach(bindColor);
+  ["from", "to"].forEach(function (id) { $(id).addEventListener("input", refreshGroups); });
+  ["fNum", "fTit", "fSub"].forEach(function (p) {
+    $(p + "F").addEventListener("change", function () { fillStyles(p, DEFAULT_STYLES[p]); });
+  });
+
+  $("addLang").onclick = function () { langRow({ code: "", title: "", subtitle: "" }); };
+  $("addGroup").onclick = function () {
+    var rows = document.querySelectorAll(".group");
+    var to = parseInt($("to").value, 10);
+    if (rows.length) {
+      var last = rows[rows.length - 1].querySelector(".upTo");
+      last.disabled = false;
+      last.value = to - 1;
+    }
+    groupRow({ label: "Group " + (rows.length + 1), upTo: to, color: "#888888", dot: "dark" });
+  };
+
+  $("generate").onclick = function () {
+    try { var cfg = collect(); } catch (e) { msg(e.message, "err"); return; }
+    msg("Working...");
+    parent.postMessage({ pluginMessage: { type: "generate", cfg: cfg } }, "*");
+  };
+  $("update").onclick = function () {
+    try { var cfg = collect(); } catch (e) { msg(e.message, "err"); return; }
+    msg("Working...");
+    parent.postMessage({ pluginMessage: { type: "update", cfg: cfg } }, "*");
+  };
+
+  onmessage = function (e) {
+    var m = e.data.pluginMessage;
+    if (!m) return;
+    if (m.type === "fonts") {
+      FONTS = m.catalog;
+      var dl = $("families");
+      Object.keys(FONTS).sort().forEach(function (f) { var o = document.createElement("option"); o.value = f; dl.appendChild(o); });
+      ["fNum", "fTit", "fSub"].forEach(function (p) { fillStyles(p, $(p + "S").value || DEFAULT_STYLES[p]); });
+    }
+    if (m.type === "selection") {
+      if (m.set) {
+        $("banner").style.display = "block";
+        $("banner").textContent = "Selected set: " + m.set.name + ". Change groups, colors, texts or fonts and click Update.";
+        $("update").disabled = false;
+        load(m.set.cfg);
+      } else {
+        $("banner").style.display = "none";
+        $("update").disabled = true;
+      }
+    }
+    if (m.type === "done") msg(m.text, "ok");
+    if (m.type === "error") msg(m.text, "err");
+  };
+</script>

@@ -2,6 +2,8 @@
 
 Creates a complete set of score rings in one click: one main component plus a grid with one variant per value, per language, ready to export. You can still adjust color groups, texts and fonts afterwards.
 
+![Example of a set of score rings](Example-score-ring-generator.png)
+
 ## Installation (one time)
 
 1. Download this repository (green **Code** button > **Download ZIP**) and unzip it.
